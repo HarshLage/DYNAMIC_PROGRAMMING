@@ -1,0 +1,49 @@
+class Solution {
+public:
+   // plane recursion 
+   int fibc(int n) {
+        if(n==0){
+            return 0;
+        }
+        if(n==1){
+            return 1;
+        }
+
+        int str = fib(n-1) + fib(n-2);
+        return str;
+        
+    }
+    // solve it using topdown approach with memoization
+    int memoization(int n ,vector<int>&dp){
+        if(n==0||n==1){
+            return n;
+        }
+        if(dp[n]!=-1){
+            return dp[n];
+        }
+
+        int num = memoization(n-1,dp) + memoization(n-2,dp);
+        return num;
+    }
+    //solve it with tabulation bottom up approach
+    int solveUsingTabulation(int n , vector<int>&dp){
+        //first filled up base case data 
+        dp[0] = 0;
+        if(n==0) return dp[0];
+        dp[1] = 1;
+
+        for(int i=2;i<=n;i++){
+            //convert recursive relationship to dp 
+            dp[i] = dp[i-1] + dp[i-2];
+        }
+        // return nth dp number
+        return dp[n];
+
+
+    }
+    int fib(int n) {
+        vector<int>dp(n+1,-1);
+        int answer =solveUsingTabulation(n,dp);
+        return answer;
+    }
+};
