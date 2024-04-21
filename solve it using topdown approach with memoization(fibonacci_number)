@@ -1,0 +1,33 @@
+class Solution {
+public:
+   // plane recursion 
+   int fibc(int n) {
+        if(n==0){
+            return 0;
+        }
+        if(n==1){
+            return 1;
+        }
+
+        int str = fib(n-1) + fib(n-2);
+        return str;
+        
+    }
+    // solve it using topdown approach with memoization
+    int memoization(int n ,vector<int>&dp){
+        if(n==0||n==1){
+            return n;
+        }
+        if(dp[n]!=-1){
+            return dp[n];
+        }
+
+        int num = memoization(n-1,dp) + memoization(n-2,dp);
+        return num;
+    }
+    int fib(int n) {
+        vector<int>dp(n+1,-1);
+        int answer = memoization(n,dp);
+        return answer;
+    }
+};
