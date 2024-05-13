@@ -1,0 +1,68 @@
+class Solution {
+public:
+    int solveRec(vector<int>&arr,  map<pair<int,int>,int>&maxi , int s , int e){
+        if(s>e){
+            return 0;
+        }
+        if(s==e){
+            return 0;
+        }
+        int ans =INT_MAX;
+        for(int i =s;i<e;i++){
+          ans = min(ans,(maxi[{s,i}] * maxi[{i+1,e}]) + solveRec(arr,maxi,s,i) + solveRec(arr,maxi,i+1,e)); 
+        }
+        return ans;
+    }
+        int solveMem(vector<int>&arr,  map<pair<int,int>,int>&maxi , int s , int e,vector<vector<int>>&dp){
+        if(s>e){
+            return 0;
+        }
+        if(s==e){
+            return 0;
+        }
+        if(dp[s][e]!=-1){
+            return dp[s][e];
+        }
+        int ans =INT_MAX;
+        for(int i =s;i<e;i++){
+          ans = min(ans,(maxi[{s,i}] * maxi[{i+1,e}]) + solveMem(arr,maxi,s,i,dp) + solveMem(arr,maxi,i+1,e,dp)); 
+        }
+        dp[s][e] = ans;
+        return ans;
+    }
+    int tab(vector<int>&arr , map<pair<int,int>,int>&maxi ){
+        int n = arr.size();
+        vector<vector<int>>dp(n+2,vector<int>(n+1,-1));
+
+        for(int start_i = n-1;start_i>=0;start_i--){
+            for(int end_i = 0;end_i<=n-1;end_i++){
+                if(start_i>=end_i){
+                    continue;
+                }
+
+        int ans =INT_MAX;
+        for(int i =start_i;i<end_i;i++){
+          ans = min(ans,(maxi[{start_i,i}] * maxi[{i+1,end_i}]) + solveMem(arr,maxi,start_i,i,dp) + solveMem(arr,maxi,i+1,end_i,dp)); 
+        }
+        dp[start_i][end_i] = ans;
+
+            }
+        }
+        return dp[0][n-1];
+    }
+    int mctFromLeafValues(vector<int>& arr) {
+        map<pair<int,int>,int>maxi;
+        for(int i = 0;i<arr.size();i++){
+            maxi[{i,i}] = arr[i];
+            for(int j = i+1;j<arr.size();j++){
+                maxi[{i,j}] = max(arr[j],maxi[{i,j-1}]);
+            }
+        }
+        int s = 0;
+        int e = arr.size()-1;
+        int n = arr.size();
+        vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+        int ans = tab(arr,maxi);
+        return ans;
+    }
+};
