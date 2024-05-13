@@ -1,0 +1,52 @@
+class Solution {
+public:
+    int getMaxMoney(int start   , int end){
+        if(start>=end){
+            return 0;
+        }
+        int ans = INT_MAX;
+        for(int i=start;i<=end;i++){
+           ans = min(ans , i + max(getMaxMoney(start,i-1),getMaxMoney(i+1,end)));
+        }
+        return ans;
+    }
+        int getMaxMoneyMem(int start   , int end,vector<vector<int>>&dp){
+        if(start>=end){
+            return 0;
+        }
+        if(dp[start][end]!=-1){
+            return dp[start][end];
+        }
+        int ans = INT_MAX;
+        for(int i=start;i<=end;i++){
+           ans = min(ans , i + max(getMaxMoneyMem(start,i-1,dp),getMaxMoneyMem(i+1,end,dp)));
+        }
+        dp[start][end] = ans;
+        return ans;
+    }
+    int tab(int n){
+         vector<vector<int>>dp(n+2,vector<int>(n+2,0));
+         for(int start_i = n-1;start_i>=1;start_i--){
+            for(int end_i = 1;end_i<=n;end_i++){
+                if(start_i>=end_i){
+                    continue;
+                }
+        int ans = INT_MAX;
+        for(int i=start_i;i<=end_i;i++){
+           ans = min(ans , i + max(dp[start_i][i-1],dp[i+1][end_i]));
+        }
+        dp[start_i][end_i] = ans;
+
+            }
+         }
+         return dp[1][n];
+    }
+    int getMoneyAmount(int n) {
+        int start = 1;
+        int end = n;
+        
+        // vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+        int ans = tab(n);
+        return ans;
+    }
+};
