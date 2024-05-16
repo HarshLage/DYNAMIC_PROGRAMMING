@@ -1,0 +1,113 @@
+class Solution {
+public:
+    bool recursionAns(vector<int>&nums,int index , int sum , int totalSum){
+        if(index>=nums.size()){
+            return 0;
+        }
+        if(sum>totalSum){
+            return 0;
+        }
+        if(sum==totalSum){
+            return true;
+        }
+
+        int include = recursionAns(nums,index+1,sum+nums[index],totalSum);
+        int exclude = recursionAns(nums,index+1,sum,totalSum);
+
+        return include || exclude;
+    }
+
+        bool Memo(vector<int>&nums,int index , int sum , int totalSum,vector<vector<int>>&dp){
+        if(index>=nums.size()){
+            return 0;
+        }
+        if(sum>totalSum){
+            return 0;
+        }
+        if(sum==totalSum){
+            return true;
+        }
+        if(dp[index][sum]!=-1){
+            return dp[index][sum];
+        }
+
+        int include = Memo(nums,index+1,sum+nums[index],totalSum,dp);
+        int exclude = Memo(nums,index+1,sum,totalSum,dp);
+
+        return dp[index][sum] =  include || exclude;
+    }
+    int tab(vector<int>&nums, int target){
+        vector<vector<int>>dp(nums.size()+2,vector<int>(target+1,0));
+
+        for(int row= 0;row<=nums.size();row++){
+            dp[row][target] = 1;
+        }
+
+        int n = nums.size();
+
+        for(int ind = n-1;ind>=0;ind--){
+            for(int s = target ;s>=0;s--){
+
+                int include = 0;
+                
+                if(s+nums[ind]<=target){ 
+
+                 include = dp[ind+1][s+nums[ind]];//make sure in dp arrey all indexes that you are accessing is valid ones
+                
+                }
+
+                 int exclude = dp[ind+1][s];
+
+                 dp[ind][s] =  include || exclude;
+            }
+        }
+        return dp[0][0];
+    }
+    int space(vector<int>&nums,int target){
+
+        int n = nums.size();
+        vector<int>curr(target+1,0);
+        vector<int>next(target+1,0);
+
+        curr[target] = 1;
+        next[target] = 1;
+
+        for(int ind = n-1;ind>=0;ind--){
+            for(int s = target ;s>=0;s--){
+
+                int include = 0;
+                
+                if(s+nums[ind]<=target){ 
+
+                 include = next[s+nums[ind]];//make sure in dp arrey all indexes that you are accessing is valid ones
+                
+                }
+
+                 int exclude = next[s];
+
+                 curr[s] =  include || exclude;
+            }
+            // shifting
+            next = curr;
+        }
+        return next[0];
+    }
+    
+    bool canPartition(vector<int>& nums) {
+        int index = 0;
+        int totalSum = 0;
+        for(int i=0;i<nums.size();i++){
+            totalSum += nums[i];
+        }
+
+        if(totalSum & 1 ){
+            return false;
+        }
+
+        totalSum = totalSum/2;
+        int currSum = 0;
+        vector<vector<int>>dp(nums.size()+1,vector<int>(totalSum+1,-1));
+        bool answer = space(nums,totalSum);
+        return answer;
+    }
+};
