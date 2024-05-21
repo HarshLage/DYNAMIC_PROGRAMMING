@@ -1,0 +1,50 @@
+class Solution {
+public:
+    int helper(vector<int>&piles,vector<int>&suffix,int index , int M,vector<vector<int>>&dp){
+        if(index>=piles.size()) return 0;
+        if(index + 2 * M >= piles.size()) return suffix[index];
+        if(dp[index][M]!=-1){
+            return dp[index][M];
+        }
+
+        int result = 0;
+        for(int x = 1;x<=2 * M;x++){
+            result = max(result,suffix[index] - helper(piles ,suffix ,index+x , max(M,x),dp) );
+            cout<<result<<endl;
+        }
+        dp[index][M] = result;
+        return result;
+    }
+    int tab(vector<int>&piles, vector<int>&suffix){
+     vector<vector<int>>dp(piles.size()+1,vector<int>(piles.size()+1,0));
+     int n = piles.size();
+     
+    for(int i = n-1 ; i>=0;i--){
+        for(int M = 1;M<=n;M++){
+            if(i + 2 * M >= piles.size()){
+              dp[i][M] = suffix[i];
+            }
+           else{
+            int result = 0;
+              for(int x = 1;x<=2 * M;x++){
+              result = max(result,suffix[i] - dp[i+x][max(M,x)] );         
+            }
+              dp[i][M] = result;
+         }
+       }
+     }
+    
+     return dp[0][1];
+    }
+    int stoneGameII(vector<int>& piles) {
+        vector<int>suffix(piles.size());
+        
+        vector<vector<int>>dp(piles.size(),vector<int>(piles.size(),-1));
+        suffix[suffix.size()-1] = piles[piles.size()-1];
+        for(int i = piles.size()-2;i>=0;i--){
+            suffix[i] = suffix[i+1] + piles[i];
+        }
+        int ans = tab(piles,suffix);
+        return ans;
+    }
+};
