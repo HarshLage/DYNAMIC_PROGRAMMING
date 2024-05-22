@@ -1,0 +1,78 @@
+class Solution {
+public:
+    int solve(vector<int>&nums,int prev , int curr , vector<vector<int>>&dp){
+        if(curr>=nums.size()){
+            return 0;
+        }
+        if(dp[prev+1][curr]!=0){
+            return dp[prev+1][curr];
+        }
+        int include = 0;
+        if(prev==-1 || nums[prev]<nums[curr]){
+            include = 1 + solve(nums,curr,curr+1,dp);
+        }
+        int exclude = 0 + solve(nums,prev,curr+1,dp);
+        int ans = max(include,exclude);
+        dp[prev+1][curr] = ans;
+        return ans;
+    }
+    int tab(vector<int>&nums){
+       vector<vector<int>>dp(nums.size()+1,vector<int>(nums.size()+1,0));
+       int n = nums.size();
+       for(int curr_i = n-1;curr_i>=0;curr_i--){
+        for(int prev_i=curr_i-1;prev_i>=-1;prev_i--){
+            int include = 0;
+            if(prev_i==-1 || nums[prev_i]<nums[curr_i]){
+            include = 1 + dp[curr_i+1][curr_i+1];
+               }
+            int exclude = 0 + dp[prev_i+1][curr_i+1];
+            int ans = max(include,exclude);
+            dp[prev_i+1][curr_i] = ans;
+            
+        }
+       } 
+       return dp[0][0];
+    }
+    int space(vector<int>&nums){
+        int  n = nums.size() ;
+        vector<int>currRow( n + 1 , 0);
+        vector<int>nextRow( n + 1 ,0 );
+        
+          for(int curr_i = n-1;curr_i>=0;curr_i--){
+        for(int prev_i=curr_i-1;prev_i>=-1;prev_i--){
+            int include = 0;
+            if(prev_i==-1 || nums[prev_i]<nums[curr_i]){
+            include = 1 + nextRow[curr_i+1];
+               }
+            int exclude = 0 + nextRow[prev_i+1];
+            int ans = max(include,exclude);
+            currRow[prev_i+1] = ans;
+            
+        }
+        nextRow = currRow;
+       } 
+       return nextRow[0];
+        
+    }
+    int BS(vector<int>&nums){
+        vector<int>ans;
+        ans.push_back(nums[0]);
+        for(int i=1;i<nums.size();i++){
+            if(nums[i]>ans.back()){
+                ans.push_back(nums[i]);
+            }
+            else{
+                int lower = lower_bound(ans.begin(),ans.end(),nums[i]) - ans.begin();
+                ans[lower] = nums[i];
+            }
+        }
+        return ans.size();
+    }
+    int lengthOfLIS(vector<int>& nums) {
+        int prev = -1;
+        int curr = 0;
+        // vector<vector<int>>dp(nums.size()+1,vector<int>(nums.size()+1,0));
+        int answer =  BS(nums);
+        return answer;
+    }
+};
