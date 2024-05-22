@@ -1,0 +1,118 @@
+class Solution {
+public:
+    int recursion(string &a , string &b , int i , int j){
+        if(j==b.length()){
+            return a.length() - i;
+        }
+        if(i == a.length()){
+            return b.length() - j;
+        }
+        int ans = 0;
+        if(a[i]==b[j]){
+           ans =  + recursion(a,b,i+1,j+1);
+        }
+        else{
+            int inser = 1 + recursion(a,b,i,j+1);
+            int replace = 1 + recursion(a,b,i+1,j+1);
+            int delet = 1 + recursion(a,b,i+1,j);
+            ans = min(inser,min(replace,delet));
+
+        }
+        
+        return ans;
+    }
+        int Mem(string &a , string &b , int i , int j,vector<vector<int>>&dp){
+        if(j==b.length()){
+            return a.length() - i;
+        }
+        if(i == a.length()){
+            return b.length() - j;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int ans = 0;
+        if(a[i]==b[j]){
+           ans =  + Mem(a,b,i+1,j+1,dp);
+        }
+        else{
+            int inser = 1 + Mem(a,b,i,j+1,dp);
+            int replace = 1 + Mem(a,b,i+1,j+1,dp);
+            int delet = 1 + Mem(a,b,i+1,j,dp);
+            ans = min(inser,min(replace,delet));
+
+        }
+        dp[i][j] = ans;
+        
+        return ans;
+    }
+    int tabulation(string a ,string b){
+          vector<vector<int>>dp(a.size()+1,vector<int>(b.size()+1,-1));
+          for(int col = 0;col<=b.size();col++){
+            dp[a.length()][col] = b.length()-col;
+          }
+          for(int row = 0;row<=a.size();row++){
+            dp[row][b.length()] = a.length()-row;
+          }
+         
+          for(int i_id = a.size()-1;i_id>=0;i_id--){
+            for(int j_id = b.size()-1;j_id>=0;j_id--){
+                 int ans = 0;
+                if(a[ i_id]==b[j_id]){
+                  ans =  0 + dp[i_id+1][j_id+1];
+                  }
+               else{
+                  int inser = 1 + dp[i_id][j_id+1];
+                  int replace = 1 + dp[i_id+1][j_id+1];
+                  int delet = 1 + dp[i_id+1][j_id];
+                  ans = min(inser,min(replace,delet));
+
+        }
+        dp[i_id][j_id] = ans;
+       
+            }
+          }
+         return dp[0][0];
+    }
+        int tabulationSO(string a ,string b){
+        //   vector<vector<int>>dp(a.size()+1,vector<int>(b.size()+1,-1));
+          vector<int>curr(a.size()+1,0);
+          vector<int>next(a.size()+1,0);
+          //iska kuch na kuch toh karna padega varna gelti kar denge
+        //   for(int col = 0;col<=b.size();col++){
+        //     dp[a.length()][col] = b.length()-col;
+        //   }
+          for(int row = 0;row<=a.size();row++){
+            next[row] = a.length()-row;
+          }
+           for(int j_id = b.size()-1;j_id>=0;j_id--){
+            curr[a.length()] = b.length()-j_id;//MOST IMPORTANT LINE
+          for(int i_id = a.size()-1;i_id>=0;i_id--){
+           
+                 int ans = 0;
+                if(a[ i_id]==b[j_id]){
+                  ans =  0 + next[i_id+1];
+                  }
+               else{
+                  int inser = 1 + next[i_id];
+                  int replace = 1 + next[i_id+1];
+                  int delet = 1 + curr[i_id+1];
+                  ans = min(inser,min(replace,delet));
+
+        }
+        curr[i_id] = ans;
+
+       
+            }
+            next = curr;
+          }
+         return next[0];
+    }
+    int minDistance(string word1, string word2) {
+        int i = 0;
+        int j = 0;
+        vector<vector<int>>dp(word1.size()+1,vector<int>(word2.size()+1,-1));
+        int answer =tabulationSO(word1,word2);
+        return answer;
+    }
+};
